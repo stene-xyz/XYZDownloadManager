@@ -74,9 +74,9 @@
             progressText.AutoSize = true;
             progressText.Location = new Point(6, 268);
             progressText.Name = "progressText";
-            progressText.Size = new Size(91, 15);
+            progressText.Size = new Size(94, 15);
             progressText.TabIndex = 6;
-            progressText.Text = "No File Selected";
+            progressText.Text = "No File Selected.";
             // 
             // progressBar
             // 
