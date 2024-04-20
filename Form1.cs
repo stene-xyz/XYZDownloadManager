@@ -64,7 +64,11 @@ namespace XYZDownloadManager
         private void AddURL(string url, bool save)
         {
             // TODO: Check before adding URL to make sure file does not already exist
-            // TODO: Check before adding URL to make sure URL not already in list
+            if (urls.ContainsKey(url))
+            {
+                Error("URL already in download list");
+                return;
+            }
             urls[url] = "0/0";
             downloadListView.Items.Add(url);
             downloadManager.AddURL(url);
