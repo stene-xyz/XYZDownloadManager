@@ -8,7 +8,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <Authors>Johnny Stene</Authors>
     <Copyright>2024 Johnny Stene. MIT License.</Copyright>
     <RepositoryUrl>https://github.com/stene-xyz/XYZDownloadManager</RepositoryUrl>
