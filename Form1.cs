@@ -18,6 +18,7 @@ namespace XYZDownloadManager
         {
             InitializeComponent();
 
+            // TODO: Update progress function to remove file from list if download finished
             downloadManager.Progress += (url, received, total) =>
             {
                 urls[url] = received + "/" + total;
@@ -62,7 +63,8 @@ namespace XYZDownloadManager
 
         private void AddURL(string url, bool save)
         {
-            // TODO: check to make sure we're not about to save over finished file
+            // TODO: Check before adding URL to make sure file does not already exist
+            // TODO: Check before adding URL to make sure URL not already in list
             urls[url] = "0/0";
             downloadListView.Items.Add(url);
             downloadManager.AddURL(url);
