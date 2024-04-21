@@ -63,12 +63,22 @@ namespace XYZDownloadManager
 
         private void AddURL(string url, bool save)
         {
-            // TODO: Check before adding URL to make sure file does not already exist
+            string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string downloadsPath = Path.Combine(userPath, "Downloads");
+            string filename = Path.Combine(downloadsPath, Path.GetFileName(url));
+
+            if (Path.Exists(filename))
+            {
+                Error($"File already exists in {downloadsPath}");
+                return;
+            }
+
             if (urls.ContainsKey(url))
             {
                 Error("URL already in download list");
                 return;
             }
+
             urls[url] = "0/0";
             downloadListView.Items.Add(url);
             downloadManager.AddURL(url);
