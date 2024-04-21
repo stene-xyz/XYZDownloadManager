@@ -101,7 +101,7 @@
             deleteURLButton.Name = "deleteURLButton";
             deleteURLButton.Size = new Size(75, 23);
             deleteURLButton.TabIndex = 3;
-            deleteURLButton.Text = "Delete URL";
+            deleteURLButton.Text = "Cancel";
             deleteURLButton.UseVisualStyleBackColor = true;
             deleteURLButton.Click += deleteURLButton_Click;
             // 
