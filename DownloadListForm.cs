@@ -6,7 +6,7 @@ using System.Security.Cryptography.Pkcs;
 
 namespace XYZDownloadManager
 {
-    public partial class Form1 : Form
+    public partial class DownloadListForm : Form
     {
         private DownloadManager downloadManager = new DownloadManager();
         private ConcurrentDictionary<string, string> urls = new ConcurrentDictionary<string, string>();
@@ -14,7 +14,7 @@ namespace XYZDownloadManager
         private string userPath;
         private string listPath;
 
-        public Form1()
+        public DownloadListForm()
         {
             InitializeComponent();
 

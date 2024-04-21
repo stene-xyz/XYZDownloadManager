@@ -1,6 +1,6 @@
 ﻿namespace XYZDownloadManager
 {
-    partial class Form1
+    partial class DownloadListForm
     {
         /// <summary>
         ///  Required designer variable.

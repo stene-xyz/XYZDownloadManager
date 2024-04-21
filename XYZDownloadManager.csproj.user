@@ -13,7 +13,7 @@
     <Compile Update="ErrorDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Form1.cs">
+    <Compile Update="DownloadListForm.cs">
       <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
