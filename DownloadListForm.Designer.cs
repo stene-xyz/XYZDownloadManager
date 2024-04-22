@@ -125,6 +125,8 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(359, 310);
             Controls.Add(groupBox1);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
             Name = "DownloadListForm";
             Text = "XYZDownloadManager";
             groupBox1.ResumeLayout(false);

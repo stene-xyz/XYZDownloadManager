@@ -58,6 +58,7 @@
             ClientSize = new Size(335, 76);
             Controls.Add(okButton);
             Controls.Add(errorText);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "MessageBox";
             Text = "Error";
             ResumeLayout(false);

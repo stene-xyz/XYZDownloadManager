@@ -63,12 +63,15 @@
             // 
             // AddURLForm
             // 
+            AcceptButton = addURL;
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            CancelButton = cancelButton;
             ClientSize = new Size(268, 77);
             Controls.Add(addURL);
             Controls.Add(cancelButton);
             Controls.Add(urlBox);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Name = "AddURLForm";
             Text = "Add URL";
             ResumeLayout(false);
