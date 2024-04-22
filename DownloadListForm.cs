@@ -50,15 +50,8 @@ namespace XYZDownloadManager
             }
             catch (Exception ex)
             {
-                Error($"Unhandled error loading list: {ex.Message}");
+                MessageBox.Error($"Unhandled error loading list: {ex.Message}");
             }
-        }
-
-        private void Error(string message)
-        {
-            ErrorDialog errorDialog = new ErrorDialog();
-            errorDialog.SetMessage(message);
-            errorDialog.ShowDialog();
         }
 
         private void AddURL(string url, bool save)
@@ -69,13 +62,13 @@ namespace XYZDownloadManager
 
             if (Path.Exists(filename))
             {
-                Error($"File already exists in {downloadsPath}");
+                MessageBox.Error($"File already exists in {downloadsPath}");
                 return;
             }
 
             if (urls.ContainsKey(url))
             {
-                Error("URL already in download list");
+                MessageBox.Error("URL already in download list");
                 return;
             }
 
@@ -94,7 +87,7 @@ namespace XYZDownloadManager
                 }
                 catch (Exception ex)
                 {
-                    Error($"Error saving URL: {ex.Message}");
+                    MessageBox.Error($"Error saving URL: {ex.Message}");
                 }
             }
         }

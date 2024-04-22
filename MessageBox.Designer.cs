@@ -1,6 +1,6 @@
 ﻿namespace XYZDownloadManager
 {
-    partial class ErrorDialog
+    partial class MessageBox
     {
         /// <summary>
         /// Required designer variable.
@@ -28,24 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
             errorText = new Label();
             okButton = new Button();
             SuspendLayout();
             // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(124, 15);
-            label1.TabIndex = 0;
-            label1.Text = "An error has occurred!";
-            // 
             // errorText
             // 
             errorText.AutoSize = true;
-            errorText.Location = new Point(12, 24);
+            errorText.Location = new Point(12, 9);
             errorText.Name = "errorText";
             errorText.Size = new Size(81, 15);
             errorText.TabIndex = 1;
@@ -61,23 +51,20 @@
             okButton.UseVisualStyleBackColor = true;
             okButton.Click += okButton_Click;
             // 
-            // ErrorDialog
+            // MessageBox
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(335, 76);
             Controls.Add(okButton);
             Controls.Add(errorText);
-            Controls.Add(label1);
-            Name = "ErrorDialog";
+            Name = "MessageBox";
             Text = "Error";
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private Label label1;
         private Label errorText;
         private Button okButton;
     }

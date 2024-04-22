@@ -11,7 +11,6 @@
 - `DownloadManager.cs`: Allow setting a time to wait in between retrying
 - `DownloadManager.cs`: Better download error handling (400/500 errors)
 - Create `SettingsForm.cs` for user settings 
-- Move `DownloadListForm.cs/Error` to its own file
 
 ## 0.1b
 #### Goal: Presentable project

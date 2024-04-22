@@ -10,7 +10,7 @@
     <Compile Update="AddURLForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="ErrorDialog.cs">
+    <Compile Update="MessageBox.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="DownloadListForm.cs">
