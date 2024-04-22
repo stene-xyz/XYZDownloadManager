@@ -51,7 +51,7 @@
             label2.Name = "label2";
             label2.Size = new Size(103, 15);
             label2.TabIndex = 1;
-            label2.Text = "Alpha Version 0.2a";
+            label2.Text = "Alpha Version 0.3a";
             // 
             // sourceCodeButton
             // 
