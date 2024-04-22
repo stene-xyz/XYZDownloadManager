@@ -117,16 +117,15 @@
             // 
             // refreshTimer
             // 
-            refreshTimer.Enabled = true;
             refreshTimer.Tick += refreshTimer_Tick;
             // 
-            // Form1
+            // DownloadListForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(359, 310);
             Controls.Add(groupBox1);
-            Name = "Form1";
+            Name = "DownloadListForm";
             Text = "XYZDownloadManager";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();

@@ -74,6 +74,7 @@ namespace XYZDownloadManager
                     {
                         // Start a fresh download
                         using var newFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
+                        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(0, null);
                         await DownloadWithProgressAsync(httpClient, url, newFileStream, cancellationToken);
                         cancellationToken.ThrowIfCancellationRequested();
                     }

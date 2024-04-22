@@ -1,10 +1,5 @@
 # TODO
 
-## 0.2a
-#### Goal: All core functionality working well
-- `DownloadListForm.cs/DownloadListForm`: Update progress function to remove file from list if download finished
-- `DownloadListForm.cs/deleteURLButon_click`: Remove URL from saved list when deleting URL
-
 ## 0.3a
 #### Goal: User customization
 - `DownloadManager.cs`: Allow specifying a custom downloads folder
@@ -16,3 +11,5 @@
 #### Goal: Presentable project
 - Code documentation
 - Tests
+- Cleanup `AboutForm.cs`
+- Icons in `MessageBox.cs`
