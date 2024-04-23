@@ -13,138 +13,58 @@ namespace XYZDownloadManager
 {
     public class DownloadManager
     {
-        private readonly Dictionary<string, CancellationTokenSource> _downloadTasks;
+        private Dictionary<string, DownloadTask> tasks = new Dictionary<string, DownloadTask>();
+        string downloadsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
 
-        public DownloadManager()
-        {
-            _downloadTasks = new Dictionary<string, CancellationTokenSource>();
-        }
-
-        // TODO: this will be replaced when all download management code moves here
         public void AddURL(string url)
         {
-            if (!_downloadTasks.ContainsKey(url))
-            {
-                var cancellationTokenSource = new CancellationTokenSource();
-                _downloadTasks.Add(url, cancellationTokenSource);
-                Task.Run(() => DownloadFileAsync(url, cancellationTokenSource.Token));
-            }
-        }
-
-        // TODO: this will be replaced when all download management code moves here
-        public void DeleteURL(string url)
-        {
-            if (_downloadTasks.ContainsKey(url))
-            {
-                _downloadTasks[url].Cancel();
-                _downloadTasks.Remove(url);
-            }
-        }
-
-        public event Action<string, long, long> Progress;
-
-        public async Task DownloadFileAsync(string url, CancellationToken cancellationToken)
-        {
-            // Extract the filename from the URL
-            string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string downloadsPath = Path.Combine(userPath, "Downloads");
             string filename = Path.Combine(downloadsPath, Path.GetFileName(url));
-            string tempFilePath = $"{filename}.part";
 
-            while (true)
+            if (Path.Exists(filename))
             {
-                try
-                {
-                    // Create a new HttpClient for this download
-                    using var httpClient = new HttpClient();
-
-                    // Check if the file already exists
-                    if (File.Exists(tempFilePath))
-                    {
-                        // Get the existing file's length
-                        long existingLength = new FileInfo(tempFilePath).Length;
-
-                        // Set the Range header to resume from the correct point
-                        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(existingLength, null);
-
-                        // Resume download by appending to existing file
-                        using var existingFileStream = new FileStream(tempFilePath, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-                        await DownloadWithProgressAsync(httpClient, url, existingFileStream, cancellationToken);
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-                    else
-                    {
-                        // Start a fresh download
-                        using var newFileStream = new FileStream(tempFilePath, FileMode.Create, FileAccess.Write, FileShare.ReadWrite);
-                        httpClient.DefaultRequestHeaders.Range = new System.Net.Http.Headers.RangeHeaderValue(0, null);
-                        await DownloadWithProgressAsync(httpClient, url, newFileStream, cancellationToken);
-                        cancellationToken.ThrowIfCancellationRequested();
-                    }
-
-                    // Rename the temporary file to the final filename
-                    File.Move(tempFilePath, filename);
-
-                    Console.WriteLine($"Download completed: {filename}");
-                    return;
-                }
-                catch(OperationCanceledException ex)
-                {
-                    Console.WriteLine("User cancelled download");
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error downloading file: {ex.Message}");
-                }
-            }
-            
-        }
-
-        // This sucks but as far as I can tell there is no better way to do this
-        private async Task DownloadWithProgressAsync(HttpClient httpClient, string url, Stream outputStream, CancellationToken cancellationToken)
-        {
-            try
-            {
-                // TODO: Handle 400/500 errors
-                using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
-
-                // This also sucks but as far as I can tell there's no better way to do this either
-                // (Range header should never be null as DownloadFileAsync function always sets it)
-                // TODO: should that be checked here though?
-                long startingAt = 0;
-                foreach (RangeItemHeaderValue rangeItem in httpClient.DefaultRequestHeaders.Range.Ranges)
-                {
-                    if (rangeItem.From.HasValue)
-                    {
-                        startingAt = rangeItem.From.Value;
-                    }
-                }
-
-                // These get sent in progress message!
-                var totalBytes = response.Content.Headers.ContentLength ?? -1L;
-                var bytesRead = 0L;
-
-                // Read file in chunks
-                using var contentStream = await response.Content.ReadAsStreamAsync();
-                var buffer = new byte[8192];
-                int bytesReadThisChunk;
-
-                while ((bytesReadThisChunk = await contentStream.ReadAsync(buffer, 0, buffer.Length)) > 0)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    await outputStream.WriteAsync(buffer, 0, bytesReadThisChunk);
-                    bytesRead += bytesReadThisChunk;
-
-                    // Report progress
-                    Progress?.Invoke(url, startingAt + bytesRead, startingAt + totalBytes);
-                }
-            }
-            catch(OperationCanceledException ex)
-            {
-                // Just return cleanly. Calling function will deal with this
+                MessageBox.Error($"File already exists in {downloadsPath}");
                 return;
             }
+
+            if (tasks.ContainsKey(url))
+            {
+                MessageBox.Error("URL already exists!");
+                return;
+            }
+
+            // Create new DownloadTask
+            DownloadTask task = new DownloadTask(url, downloadsPath);
+            tasks.Add(url, task);
+            Task.Run(() => task.StartDownload());
+        }
+
+        public void CancelURL(string url) 
+        {
+            if (tasks.ContainsKey(url))
+            {
+                tasks[url].Cancel();
+                tasks.Remove(url);
+            }
+        }
+
+        public string[] GetUrls()
+        {
+            return tasks.Keys.ToArray();
+        }
+
+        public ByteCount GetProgress(string url)
+        {
+            if (!tasks.ContainsKey(url)) return null;
+            ByteCount count = new ByteCount();
+            count.received = tasks[url].ReceivedCount();
+            count.total = tasks[url].TotalCount();
+            return count;
+        }
+
+        public bool Exists(string url)
+        {
+            if (tasks.ContainsKey(url)) return true;
+            return false;
         }
     }
 

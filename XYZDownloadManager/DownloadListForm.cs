@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,68 +11,27 @@ namespace XYZDownloadManager
     public partial class DownloadListForm : Form
     {
         private DownloadManager downloadManager = new DownloadManager();
-        private ConcurrentDictionary<string, string> urls = new ConcurrentDictionary<string, string>();
 
         public DownloadListForm()
         {
             InitializeComponent();
 
-            // This function is called whenever a download task reports a status update
-            // This saves the current progress to the URL list
-            downloadManager.Progress += (url, received, total) =>
-            {
-                urls[url] = $"{received}/{total}";
-            };
-
             // Load URL list from disk
             string[] urlList = FileList.Load();
             foreach (string url in urlList)
             {
-                AddURL(url, false);
+                downloadListView.Items.Add(url);
+                downloadManager.AddURL(url);
             }
 
             // RefreshTimer is used to refresh the download progress and check for finished downloads
             refreshTimer.Enabled = true;
         }
 
-        private void AddURL(string url, bool save)
-        {
-            // Check to make sure file not already saved on disk
-            string userPath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string downloadsPath = Path.Combine(userPath, "Downloads");
-            string filename = Path.Combine(downloadsPath, Path.GetFileName(url));
-
-            if (Path.Exists(filename))
-            {
-                MessageBox.Error($"File already exists in {downloadsPath}");
-                return;
-            }
-
-            // Make sure we're not currently downloading this URL
-            if (urls.ContainsKey(url))
-            {
-                MessageBox.Error("URL already in download list");
-                return;
-            }
-
-            // Add the URL to the download list
-            urls[url] = "0/0";
-            downloadListView.Items.Add(url);
-            downloadManager.AddURL(url);
-
-            // save will be false if we're loading from disk currently
-            // (as we don't want to overwrite the URL list)
-            if(save)
-            {
-                FileList.Save(urls);
-            }
-        }
-
         public void DeleteURL(string url)
         {
             // Pull the URL from both the download manager and the URL list
-            downloadManager.DeleteURL(url);
-            urls.TryRemove(new KeyValuePair<string, string>(url, urls[url]));
+            downloadManager.CancelURL(url);
 
             // Without this check the program can crash or delete the wrong download from the list
             int urlIndex = downloadListView.Items.IndexOfKey(url);
@@ -81,7 +41,7 @@ namespace XYZDownloadManager
             }
 
             // Save the file list
-            FileList.Save(urls);
+            FileList.Save(downloadManager.GetUrls());
         }
 
         private void aboutButton_Click(object sender, EventArgs e)
@@ -100,7 +60,9 @@ namespace XYZDownloadManager
             while (!addURLForm.finished) { }
             if (!addURLForm.url.Equals(""))
             {
-                AddURL(addURLForm.url, true);
+                downloadListView.Items.Add(addURLForm.url);
+                downloadManager.AddURL(addURLForm.url);
+                FileList.Save(downloadManager.GetUrls());
             }
         }
 
@@ -115,14 +77,11 @@ namespace XYZDownloadManager
                 return;
             }
 
-            // This solves a crash when the selected item is the same as an item we've just deleted
-            // (like when the currently selected download finishes)
-            if (urls.ContainsKey(downloadListView.Items[downloadListView.SelectedIndices[0]].Text))
-            {
-                progressText.Text = urls[downloadListView.Items[downloadListView.SelectedIndices[0]].Text];
-                progressBar.Maximum = int.Parse(progressText.Text.Split("/")[1]);
-                progressBar.Value = int.Parse(progressText.Text.Split("/")[0]);
-            }
+            string url = downloadListView.Items[downloadListView.SelectedIndices[0]].Text;
+            ByteCount count = downloadManager.GetProgress(url);
+
+            progressText.Text = count.ToString();
+            progressBar.Value = count.Percent();
         }
 
         private void refreshTimer_Tick(object sender, EventArgs e)
@@ -132,13 +91,10 @@ namespace XYZDownloadManager
             downloadListView_SelectedIndexChanged(null, null);
 
             // Cleanup finished downloads
-            foreach(string url in urls.Keys)
+            foreach(string url in downloadManager.GetUrls())
             {
-                // TODO: probably shouldn't be parsing these longs so much
-                // will fix when URL management moves to the DownloadManager class
-                if (long.Parse(urls[url].Split("/")[0]) == 0) continue;
 
-                if (long.Parse(urls[url].Split("/")[0]) == long.Parse(urls[url].Split("/")[1]))
+                if (downloadManager.GetProgress(url).Complete())
                 {
                     DeleteURL(url);
                 }
@@ -147,7 +103,7 @@ namespace XYZDownloadManager
             // Cleanup orphaned list entries
             foreach(ListViewItem url in downloadListView.Items)
             {
-                if(!urls.ContainsKey(url.Text))
+                if(!downloadManager.Exists(url.Text))
                 {
                     downloadListView.Items.Remove(url);
                 }

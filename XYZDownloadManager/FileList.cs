@@ -20,7 +20,7 @@ namespace XYZDownloadManager
             return Path.Combine(userPath, "XYZDownloadManager.lst");
         }
 
-        public static void Save(ConcurrentDictionary<string, string> urls)
+        public static void Save(string[] urls)
         {
             string listPath = GetPath();
 
@@ -31,7 +31,7 @@ namespace XYZDownloadManager
                 {
                     using (StreamWriter writer = File.CreateText(listPath))
                     {
-                        foreach (string url in urls.Keys)
+                        foreach (string url in urls)
                         {
                             writer.WriteLine(url);
                         }
