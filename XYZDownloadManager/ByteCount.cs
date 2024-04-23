@@ -14,8 +14,7 @@ namespace XYZDownloadManager
 
         public override string ToString()
         {
-            // TODO: Add KiB, MiB, GiB, TiB
-            return $"{received}/{total}";
+            return $"{FileSize.Scale(received)}/{FileSize.Scale(total)}";
         }
 
         public bool Complete()
