@@ -9,7 +9,6 @@
 
 ## 0.1b
 #### Goal: Presentable project
-- Code documentation
 - Tests
 - Cleanup `AboutForm.cs`
 - Icons in `MessageBox.cs`

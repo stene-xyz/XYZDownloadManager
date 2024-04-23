@@ -20,6 +20,7 @@ namespace XYZDownloadManager
             _downloadTasks = new Dictionary<string, CancellationTokenSource>();
         }
 
+        // TODO: this will be replaced when all download management code moves here
         public void AddURL(string url)
         {
             if (!_downloadTasks.ContainsKey(url))
@@ -30,6 +31,7 @@ namespace XYZDownloadManager
             }
         }
 
+        // TODO: this will be replaced when all download management code moves here
         public void DeleteURL(string url)
         {
             if (_downloadTasks.ContainsKey(url))
@@ -98,13 +100,18 @@ namespace XYZDownloadManager
             
         }
 
+        // This sucks but as far as I can tell there is no better way to do this
         private async Task DownloadWithProgressAsync(HttpClient httpClient, string url, Stream outputStream, CancellationToken cancellationToken)
         {
             try
             {
+                // TODO: Handle 400/500 errors
                 using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
                 response.EnsureSuccessStatusCode();
 
+                // This also sucks but as far as I can tell there's no better way to do this either
+                // (Range header should never be null as DownloadFileAsync function always sets it)
+                // TODO: should that be checked here though?
                 long startingAt = 0;
                 foreach (RangeItemHeaderValue rangeItem in httpClient.DefaultRequestHeaders.Range.Ranges)
                 {
@@ -114,9 +121,11 @@ namespace XYZDownloadManager
                     }
                 }
 
+                // These get sent in progress message!
                 var totalBytes = response.Content.Headers.ContentLength ?? -1L;
                 var bytesRead = 0L;
 
+                // Read file in chunks
                 using var contentStream = await response.Content.ReadAsStreamAsync();
                 var buffer = new byte[8192];
                 int bytesReadThisChunk;
@@ -133,6 +142,7 @@ namespace XYZDownloadManager
             }
             catch(OperationCanceledException ex)
             {
+                // Just return cleanly. Calling function will deal with this
                 return;
             }
         }

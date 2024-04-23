@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
+// Should be relatively self-explanatory
+// Will report back when I find a bug after dropping the project for 6 months
+
 namespace XYZDownloadManager
 {
     internal class FileList

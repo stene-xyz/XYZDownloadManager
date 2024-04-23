@@ -12,6 +12,7 @@ namespace XYZDownloadManager
 {
     public partial class AddURLForm : Form
     {
+        // TODO: this sucks. use events?
         public string url;
         public bool finished;
 
